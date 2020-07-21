@@ -11,8 +11,6 @@ class Validator {
 	
 	int[][] input;
 	
-	private static final int NOTFILLED = 0;
-	
 	/**
 	 * hashset to have unique row values
 	 */
@@ -59,7 +57,7 @@ class Validator {
 
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
-				if (!isValid(i, j) || input[i][j] == NOTFILLED) {
+				if (!isValid(i, j)) {
 					return false;
 				}
 			}
