@@ -68,7 +68,7 @@ class Validator {
 	/**
 	 * Validator which uses the ArrayList of hashset to check for duplicate values in rows , columns and sub grid 3x3
 	 */
-	public boolean isValid(int row, int col) {
+	private boolean isValid(int row, int col) {
 
 		rows = list.get(row);
 		columns = list.get(9 + col);

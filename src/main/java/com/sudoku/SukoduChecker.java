@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -23,30 +24,33 @@ public class SukoduChecker {
 
 	/**
 	 * @param args
+	 * @throws Exception 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 //		int[][] input = { { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, { 4, 5, 6, 7, 8, 9, 1, 2, 3 }, { 7, 8, 9, 1, 2, 3, 4, 5, 6 },
 //				{ 2, 3, 4, 5, 6, 7, 8, 9, 1 }, { 5, 6, 7, 8, 9, 1, 2, 3, 4 }, { 8, 9, 1, 2, 3, 4, 5, 6, 7 },
 //				{ 3, 4, 5, 6, 7, 8, 9, 1, 2 }, { 6, 7, 8, 9, 1, 2, 3, 4, 5 }, { 9, 1, 2, 3, 4, 5, 6, 7, 8 } };
 
-		int[][] sudoku = parseSudokuInput(args);
-		Validator validator = new Validator(sudoku); // Constructor which initializes with input filled sudoku
+		int[][] sudoku = parseSudokuInput(args); //Pass the input from run configurations program arguments just the file name
+		if (sudoku != null) {
+			Validator validator = new Validator(sudoku); // Constructor which initializes with input filled sudoku
 
-		// Calling the checker method in validator to check the filled sudoku is valid
-		// or not
-		if (validator.checker()) {
-			log.info("Valid Sudoku");
-		} else {
-			log.info("Invalid Sudoku");
-		}
-
+			// Calling the checker method in validator to check the filled sudoku is valid
+			// or not
+			if (validator.checker()) {
+				log.info("Valid Sudoku");
+			} else {
+				log.info("Invalid Sudoku");
+			}
+		}	
 	}
 
 	/**
 	 * @param args
 	 * @return
+	 * @throws Exception 
 	 */
-	static int[][] parseSudokuInput(String[] args) {
+	static int[][] parseSudokuInput(String[] args) throws Exception {
 
 		int[][] result = null;
 
@@ -59,7 +63,7 @@ public class SukoduChecker {
 
 		if ("".equals(inputFile)) {
 			log.info("No File input provided");
-			System.exit(1);
+			throw new RuntimeException("No input provided");
 		}
 
 		// check and read the file
@@ -70,8 +74,7 @@ public class SukoduChecker {
 			// Check File exists
 			File file = new File(inputFile);
 			if (!file.exists()) {
-				log.info("The give file doesn't exists. Please input the full path of the file!");
-				System.exit(1);
+				throw new RuntimeException("The given file doesn't exists. Please input the full path of the file!");
 			}
 
 			String line;
@@ -98,7 +101,7 @@ public class SukoduChecker {
 				if (noOfColumn != noOfRows) {
 					log.info("No of rows should match the no of columns. Problem in line " + i
 							+ " of the file");
-					System.exit(1);
+					return null;
 				}
 
 				// initialize the board array only on the first iteration
@@ -113,7 +116,7 @@ public class SukoduChecker {
 						result[i][j] = Integer.parseInt(strCols[j]);
 					} else {
 						log.info("Digits found other than 1 to 9, Invalid Filled Sudoku");
-						System.exit(1);
+						return null;
 					}
 				}
 
@@ -121,8 +124,8 @@ public class SukoduChecker {
 
 		} catch (IOException e) {
 			log.info("Exception with input File. Provide valid file path");
-		} catch (Exception ex) {
-			log.info("Exception while File parsing." + ex.getMessage());
+		} catch (RuntimeException ex) {
+			log.info("Exception while File parsing : " + ex.getLocalizedMessage());
 		}
 
 		return result;
